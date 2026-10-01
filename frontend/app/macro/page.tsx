@@ -1,0 +1,10 @@
+const api = process.env.API_URL ?? "http://localhost:8000";
+
+export default async function Macro() {
+  const health = await fetch(api + "/health/data", { cache: "no-store" }).then((r) => r.json()).catch(() => ({ domains: [] }));
+  const macro = health.domains?.find((item: any) => item.domain === "macro");
+  return <div className="space-y-8"><header><p className="text-xs font-black tracking-[.22em] text-[#50f2a7]">MARKET REGIME</p><h1 className="mt-3 text-5xl font-black tracking-[-.04em]">Macro context</h1><p className="mt-3 max-w-2xl text-[#8da49a]">The macro component is isolated from technical and fundamental evidence so its provider can be replaced independently.</p></header>
+    <section className="grid gap-5 md:grid-cols-3"><article className="rounded-2xl border border-[#1c312b] bg-[#091210] p-6"><p className="text-xs uppercase tracking-widest text-[#789087]">Regime</p><p className="mt-3 text-3xl font-black">Neutral</p><p className="mt-2 text-sm text-[#789087]">Fallback score: 50/100</p></article><article className="rounded-2xl border border-[#1c312b] bg-[#091210] p-6"><p className="text-xs uppercase tracking-widest text-[#789087]">Provider status</p><p className="mt-3 text-3xl font-black">{macro?.status ?? "Not connected"}</p><p className="mt-2 text-sm text-[#789087]">Configure a macro provider before using regime evidence.</p></article><article className="rounded-2xl border border-[#1c312b] bg-[#091210] p-6"><p className="text-xs uppercase tracking-widest text-[#789087]">Signal influence</p><p className="mt-3 text-3xl font-black">10%</p><p className="mt-2 text-sm text-[#789087]">Neutral until fresh macro data is available.</p></article></section>
+    <div className="rounded-2xl border border-amber-400/20 bg-amber-400/5 p-6 text-sm leading-7 text-amber-100/70">Planned inputs include index trend, volatility regime, yield curve, policy rate, inflation trend, and economic-growth indicators. The scoring engine deliberately uses a neutral value while those inputs are unavailable rather than inventing macro evidence.</div>
+  </div>;
+}

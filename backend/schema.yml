@@ -1,0 +1,1634 @@
+openapi: 3.0.3
+info:
+  title: Dragonfly API
+  version: 1.0.0
+  description: Provider-agnostic market intelligence and stock screening API.
+paths:
+  /api/schema/:
+    get:
+      operationId: api_schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/auth/login/:
+    post:
+      operationId: api_v1_auth_login_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+          description: ''
+  /api/v1/auth/logout/:
+    post:
+      operationId: api_v1_auth_logout_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/v1/auth/me/:
+    get:
+      operationId: api_v1_auth_me_retrieve
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/v1/instruments/:
+    get:
+      operationId: api_v1_instruments_list
+      parameters:
+      - in: query
+        name: active
+        schema:
+          type: boolean
+      - in: query
+        name: exchange
+        schema:
+          type: string
+      - in: query
+        name: industry
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: sector
+        schema:
+          type: string
+      - in: query
+        name: symbol
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedInstrumentList'
+          description: ''
+  /api/v1/instruments/{id}/:
+    get:
+      operationId: api_v1_instruments_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this instrument.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instrument'
+          description: ''
+  /api/v1/instruments/{id}/analysts/:
+    get:
+      operationId: api_v1_instruments_analysts_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this instrument.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instrument'
+          description: ''
+  /api/v1/instruments/{id}/earnings/:
+    get:
+      operationId: api_v1_instruments_earnings_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this instrument.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instrument'
+          description: ''
+  /api/v1/instruments/{id}/filings/:
+    get:
+      operationId: api_v1_instruments_filings_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this instrument.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instrument'
+          description: ''
+  /api/v1/instruments/{id}/fundamentals/:
+    get:
+      operationId: api_v1_instruments_fundamentals_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this instrument.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instrument'
+          description: ''
+  /api/v1/instruments/{id}/insiders/:
+    get:
+      operationId: api_v1_instruments_insiders_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this instrument.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instrument'
+          description: ''
+  /api/v1/instruments/{id}/news/:
+    get:
+      operationId: api_v1_instruments_news_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this instrument.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instrument'
+          description: ''
+  /api/v1/instruments/{id}/peers/:
+    get:
+      operationId: api_v1_instruments_peers_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this instrument.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instrument'
+          description: ''
+  /api/v1/instruments/{id}/prices/:
+    get:
+      operationId: api_v1_instruments_prices_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this instrument.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instrument'
+          description: ''
+  /api/v1/instruments/{id}/profile/:
+    get:
+      operationId: api_v1_instruments_profile_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this instrument.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instrument'
+          description: ''
+  /api/v1/instruments/{id}/technicals/:
+    get:
+      operationId: api_v1_instruments_technicals_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this instrument.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instrument'
+          description: ''
+  /api/v1/market/earnings-calendar/:
+    get:
+      operationId: api_v1_market_earnings_calendar_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEarningsEventList'
+          description: ''
+  /api/v1/market/earnings-calendar/{id}/:
+    get:
+      operationId: api_v1_market_earnings_calendar_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this earnings event.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EarningsEvent'
+          description: ''
+  /api/v1/market/ipo-calendar/:
+    get:
+      operationId: api_v1_market_ipo_calendar_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedIpoEventList'
+          description: ''
+  /api/v1/market/ipo-calendar/{id}/:
+    get:
+      operationId: api_v1_market_ipo_calendar_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this ipo event.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IpoEvent'
+          description: ''
+  /api/v1/market/news/:
+    get:
+      operationId: api_v1_market_news_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMarketNewsList'
+          description: ''
+  /api/v1/market/news/{id}/:
+    get:
+      operationId: api_v1_market_news_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this market news.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarketNews'
+          description: ''
+  /api/v1/screener-runs/:
+    get:
+      operationId: api_v1_screener_runs_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedScreenerRunList'
+          description: ''
+  /api/v1/screener-runs/{id}/:
+    get:
+      operationId: api_v1_screener_runs_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this screener run.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreenerRun'
+          description: ''
+  /api/v1/screener-runs/{id}/matches/:
+    get:
+      operationId: api_v1_screener_runs_matches_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this screener run.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreenerRun'
+          description: ''
+  /api/v1/screeners/:
+    get:
+      operationId: api_v1_screeners_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedScreenerList'
+          description: ''
+    post:
+      operationId: api_v1_screeners_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Screener'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Screener'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Screener'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Screener'
+          description: ''
+  /api/v1/screeners/{id}/:
+    get:
+      operationId: api_v1_screeners_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this screener.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Screener'
+          description: ''
+    put:
+      operationId: api_v1_screeners_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this screener.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Screener'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Screener'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Screener'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Screener'
+          description: ''
+    patch:
+      operationId: api_v1_screeners_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this screener.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedScreener'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedScreener'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedScreener'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Screener'
+          description: ''
+    delete:
+      operationId: api_v1_screeners_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this screener.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/screeners/{id}/run/:
+    post:
+      operationId: api_v1_screeners_run_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this screener.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Screener'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Screener'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Screener'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Screener'
+          description: ''
+  /api/v1/screeners/{id}/runs/:
+    get:
+      operationId: api_v1_screeners_runs_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this screener.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Screener'
+          description: ''
+  /api/v1/system/jobs/:
+    get:
+      operationId: api_v1_system_jobs_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobRunList'
+          description: ''
+  /api/v1/system/jobs/{id}/:
+    get:
+      operationId: api_v1_system_jobs_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job run.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRun'
+          description: ''
+components:
+  schemas:
+    EarningsEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        event_date:
+          type: string
+          format: date
+        fiscal_year:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          nullable: true
+        fiscal_quarter:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        eps_estimate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,14}(?:\.\d{0,6})?$
+          nullable: true
+        revenue_estimate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,22}(?:\.\d{0,2})?$
+          nullable: true
+        session:
+          type: string
+          maxLength: 20
+        provider:
+          type: string
+          maxLength: 50
+        raw_payload: {}
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        instrument:
+          type: integer
+      required:
+      - created_at
+      - event_date
+      - id
+      - instrument
+      - provider
+    Instrument:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        symbol:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        exchange:
+          type: string
+          readOnly: true
+        asset_type:
+          type: string
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        sector:
+          type: string
+          readOnly: true
+        industry:
+          type: string
+          readOnly: true
+        provider_symbol:
+          type: string
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+        market_cap:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,22}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - asset_type
+      - created_at
+      - currency
+      - exchange
+      - id
+      - industry
+      - is_active
+      - market_cap
+      - name
+      - provider_symbol
+      - sector
+      - symbol
+      - updated_at
+    IpoEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        symbol:
+          type: string
+          maxLength: 20
+        company_name:
+          type: string
+          maxLength: 255
+        ipo_date:
+          type: string
+          format: date
+        exchange:
+          type: string
+          maxLength: 100
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,14}(?:\.\d{0,6})?$
+          nullable: true
+        shares:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          nullable: true
+        status:
+          type: string
+          maxLength: 50
+        provider:
+          type: string
+          maxLength: 50
+        raw_payload: {}
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - company_name
+      - created_at
+      - id
+      - ipo_date
+      - provider
+      - symbol
+    JobRun:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        job_type:
+          $ref: '#/components/schemas/JobTypeEnum'
+        market_date:
+          type: string
+          format: date
+          nullable: true
+        status:
+          $ref: '#/components/schemas/JobRunStatusEnum'
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+        finished_at:
+          type: string
+          format: date-time
+          nullable: true
+        symbols_requested:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        symbols_succeeded:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        symbols_failed:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        rows_inserted:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        rows_updated:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        error_message:
+          type: string
+        metadata: {}
+      required:
+      - id
+      - job_type
+    JobRunStatusEnum:
+      enum:
+      - PENDING
+      - RUNNING
+      - SUCCESS
+      - PARTIAL_SUCCESS
+      - FAILED
+      - CANCELLED
+      type: string
+      description: |-
+        * `PENDING` - Pending
+        * `RUNNING` - Running
+        * `SUCCESS` - Success
+        * `PARTIAL_SUCCESS` - Partial success
+        * `FAILED` - Failed
+        * `CANCELLED` - Cancelled
+    JobTypeEnum:
+      enum:
+      - INSTRUMENT_SYNC
+      - MARKET_INGESTION
+      - MARKET_VALIDATION
+      - TECHNICAL_CALCULATION
+      - SCREENER_EXECUTION
+      - INTELLIGENCE_SYNC
+      type: string
+      description: |-
+        * `INSTRUMENT_SYNC` - Instrument sync
+        * `MARKET_INGESTION` - Market ingestion
+        * `MARKET_VALIDATION` - Market validation
+        * `TECHNICAL_CALCULATION` - Technical calculation
+        * `SCREENER_EXECUTION` - Screener execution
+        * `INTELLIGENCE_SYNC` - Intelligence sync
+    Login:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - password
+      - username
+    MarketNews:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        provider:
+          type: string
+          maxLength: 50
+        provider_article_id:
+          type: string
+          maxLength: 255
+        published_at:
+          type: string
+          format: date-time
+        source:
+          type: string
+          maxLength: 255
+        headline:
+          type: string
+          maxLength: 500
+        summary:
+          type: string
+        url:
+          type: string
+          format: uri
+          maxLength: 1000
+        category:
+          type: string
+          maxLength: 100
+        raw_payload: {}
+        ingested_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - headline
+      - id
+      - ingested_at
+      - provider
+      - provider_article_id
+      - published_at
+      - url
+    PaginatedEarningsEventList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/EarningsEvent'
+    PaginatedInstrumentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Instrument'
+    PaginatedIpoEventList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/IpoEvent'
+    PaginatedJobRunList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobRun'
+    PaginatedMarketNewsList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/MarketNews'
+    PaginatedScreenerList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Screener'
+    PaginatedScreenerRunList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScreenerRun'
+    PatchedScreener:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_by:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        rules: {}
+        ranking_weights: {}
+        enabled:
+          type: boolean
+        is_builtin:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    Screener:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_by:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        rules: {}
+        ranking_weights: {}
+        enabled:
+          type: boolean
+        is_builtin:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - created_by
+      - id
+      - is_builtin
+      - name
+      - rules
+      - updated_at
+    ScreenerMatch:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        symbol:
+          type: string
+          readOnly: true
+        rank:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        score:
+          type: number
+          format: double
+        matched_values: {}
+        component_scores: {}
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        screener_run:
+          type: integer
+        instrument:
+          type: integer
+      required:
+      - created_at
+      - id
+      - instrument
+      - rank
+      - score
+      - screener_run
+      - symbol
+    ScreenerRun:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScreenerMatch'
+          readOnly: true
+        market_date:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/ScreenerRunStatusEnum'
+        started_at:
+          type: string
+          format: date-time
+          readOnly: true
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        stocks_evaluated:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        stocks_matched:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        calculation_version:
+          type: string
+          maxLength: 50
+        error_message:
+          type: string
+        screener:
+          type: integer
+      required:
+      - calculation_version
+      - id
+      - market_date
+      - matches
+      - screener
+      - started_at
+    ScreenerRunStatusEnum:
+      enum:
+      - RUNNING
+      - SUCCESS
+      - FAILED
+      type: string
+      description: |-
+        * `RUNNING` - Running
+        * `SUCCESS` - Success
+        * `FAILED` - Failed
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Email address
+        first_name:
+          type: string
+          readOnly: true
+        last_name:
+          type: string
+          readOnly: true
+        is_staff:
+          type: boolean
+          readOnly: true
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+      required:
+      - email
+      - first_name
+      - id
+      - is_staff
+      - last_name
+      - username
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"
